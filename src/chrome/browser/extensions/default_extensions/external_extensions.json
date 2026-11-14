@@ -1,0 +1,13 @@
+// This json file will contain a list of extensions that will be included
+// in the installer.
+//
+// Anar: preinstalled by default, kept updated from the real Chrome Web
+// Store by Chromium's normal extension updater (no bundled extension code
+// of our own). See chrome/browser/extensions/external_provider_impl.cc for
+// the Windows ExternalPrefLoader provider that reads this file.
+
+{
+  "jplgfhpmjnbigmhklmmbgecoobifkmpa": {
+    "external_update_url": "https://clients2.google.com/service/update2/crx"
+  }
+}
