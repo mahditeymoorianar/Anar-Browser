@@ -1,0 +1,28 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this file,
+// You can obtain one at http://mozilla.org/MPL/2.0/.
+
+// Simplified Anar mark: a sphere ("planet") crossed by a diagonal ring band,
+// with a small pomegranate-style crown on top. This is a hand-simplified
+// flat-vector approximation of the real Anar logo (see
+// resources/images/logos/anar-logo.ico) for use in this vector-path-only
+// icon format, which cannot embed a raster image.
+
+CANVAS_DIMENSIONS, 24,
+PATH_COLOR_ARGB, 0xFF, 0xA9, 0xAC, 0xB3,
+CIRCLE, 12, 13, 8,
+NEW_PATH,
+PATH_COLOR_ARGB, 0xFF, 0xE7, 0xE9, 0xEC,
+MOVE_TO, 2.5f, 17,
+LINE_TO, 19.5f, 6,
+LINE_TO, 21.5f, 8.3f,
+LINE_TO, 4.5f, 19.3f,
+CLOSE,
+NEW_PATH,
+PATH_COLOR_ARGB, 0xFF, 0x8B, 0x8E, 0x96,
+MOVE_TO, 9, 6,
+LINE_TO, 10, 1.5f,
+LINE_TO, 12, 5,
+LINE_TO, 14, 1.5f,
+LINE_TO, 15, 6,
+CLOSE
