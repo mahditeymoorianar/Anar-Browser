@@ -1,0 +1,7 @@
+# Append these overrides after the generated import in out/Component/args.gn.
+enable_brave_news = false
+enable_brave_rewards = false
+enable_brave_talk = false
+enable_brave_vpn_v1 = false
+enable_brave_vpn_v2 = false
+enable_brave_wallet = false

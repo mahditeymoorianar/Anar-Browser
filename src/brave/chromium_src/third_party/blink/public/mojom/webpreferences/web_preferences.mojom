@@ -1,0 +1,32 @@
+// Copyright (c) 2022 The Brave Authors. All rights reserved.
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this file,
+// You can obtain one at http://mozilla.org/MPL/2.0/.
+
+module blink.mojom;
+
+[BraveExtend]
+struct WebPreferences {
+  // If |force_cosmetic_filters| is true, cosmetic filters will be applied to
+  // regardless of contents settings. This is used for Playlist so that it can
+  // remove ads from the page.
+  bool force_cosmetic_filtering;
+  bool page_in_reader_mode = false;
+  bool is_tor_window = false;
+  bool global_privacy_control_enabled = true;
+
+  // "Voice Swap" privacy feature: when enabled, the renderer replaces the
+  // audio track of every getUserMedia() microphone stream with one relayed
+  // through a local voice-conversion server, so sites hear the chosen
+  // persona's voice instead of the user's real one. |voice_swap_port| and
+  // |voice_swap_token| are that local server's loopback port and the
+  // bearer token needed to talk to it — passed this way (rather than a
+  // fixed well-known port/no auth) so a compromised or malicious page's
+  // own JavaScript can't just open its own WebSocket to it; only the
+  // browser's own injected script (which alone can read WebPreferences)
+  // ever sees this value.
+  bool voice_swap_enabled = false;
+  string voice_swap_persona_id;
+  int32 voice_swap_port = 0;
+  string voice_swap_token;
+};

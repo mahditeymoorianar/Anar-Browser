@@ -1,0 +1,316 @@
+<link rel="import" href="chrome://resources/cr_elements/md_select.css.html">
+<style include="settings-shared md-select">
+  .settings-box {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* Location & time zone privacy section */
+  .spoofing-intro {
+    align-items: flex-start;
+  }
+
+  .spoofing-title {
+    /* Match the weight/size of other in-page section headings rather than
+       the browser default for <h2>. */
+    font-size: inherit;
+    font-weight: 500;
+    margin: 0 0 4px;
+  }
+
+  /* Sub-settings that only apply while their parent toggle is on. */
+  .indented {
+    padding-inline-start: var(--cr-section-indent-padding, 20px);
+  }
+
+  .coordinate-row {
+    display: flex;
+    gap: 16px;
+  }
+
+  .coordinate-input {
+    flex: 1;
+    /* Keep the two fields readable side by side without letting them
+       stretch the full width of the page on wide windows. */
+    max-width: 220px;
+  }
+
+  .add-persona-form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .file-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+</style>
+<div class="settings-box">
+  <div class="start" id="labelWrapper">
+    <div class="label">$i18n{webRTCPolicyLabel}</div>
+    <a id="learnMore" href="$i18n{webRTCLearnMoreURL}" target="_blank">
+      $i18n{webRTCPolicySubLabel}
+    </a>
+  </div>
+  <settings-dropdown-menu label="$i18n{webRTCLearnMoreURL}"
+      pref-key="webrtc.ip_handling_policy"
+      menu-options="[[webRTCPolicies_]]">
+  </settings-dropdown-menu>
+</div>
+<settings-toggle-button id="anarWebRtcDisabled"
+    class="cr-row"
+    pref="{{prefs.anar.webrtc_disabled}}"
+    label="Always disable WebRTC"
+    sub-label="Stronger than the policy above: sites can't use WebRTC at all. Breaks browser-based video and voice calls (Meet, Zoom web, Discord).">
+</settings-toggle-button>
+<settings-toggle-button id="pushMessagingEnabled"
+    class="cr-row"
+    pref="{{prefs.brave.gcm.channel_status}}"
+    label="$i18n{pushMessagingLabel}">
+    <template is="dom-if" if="[[shouldShowRestart_(
+      prefs.brave.gcm.channel_status.value)]]">
+    <cr-button on-click="restartBrowser_" slot="more-actions">
+      $i18n{restart}
+    </cr-button>
+  </template>
+</settings-toggle-button>
+<div class="settings-box">
+  <div class="start" id="labelWrapper">
+    <div class="label">$i18n{historyRetentionLabel}</div>
+    <div class="secondary label" id="sub-label">
+      $i18n{historyRetentionSubLabel}
+    </div>
+  </div>
+  <settings-dropdown-menu id="historyRetention"
+      pref-key="brave.history.retention_days"
+      menu-options="[[historyRetentionOptions_]]">
+  </settings-dropdown-menu>
+</div>
+<settings-toggle-button
+  class="cr-row"
+  pref="{{prefs.brave.de_amp.enabled}}"
+  label="$i18n{deAmpSettingLabel}"
+  sub-label="$i18n{deAmpSettingSubLabel}"
+  learn-more-url="$i18n{deAmpLearnMoreURL}">
+</settings-toggle-button>
+<template is="dom-if" if="[[isDebounceFeatureEnabled_]]">
+  <settings-toggle-button
+    class="cr-row"
+    pref="{{prefs.brave.debounce.enabled}}"
+    label="$i18n{debounceSettingLabel}"
+    sub-label="$i18n{debounceSettingSubLabel}"
+    learn-more-url="$i18n{debounceLearnMoreURL}">
+  </settings-toggle-button>
+</template>
+<settings-toggle-button
+  class="cr-row"
+  pref="{{prefs.brave.reduce_language}}"
+  label="$i18n{reduceLanguageControlLabel}"
+  sub-label="$i18n{reduceLanguageDesc}">
+</settings-toggle-button>
+<div hidden="[[!isRequestOTRFeatureEnabled_]]" class="settings-box">
+    <div class="start" id="labelWrapper">
+        <div class="label">$i18n{requestOTRLabel}</div>
+    </div>
+    <settings-dropdown-menu id="defaultRequestOTR"
+                            pref-key="brave.request_otr.request_otr_action_option"
+                            menu-options="[[requestOTRActions_]]">
+    </settings-dropdown-menu>
+</div>
+<!-- <if expr="enable_psst"> -->
+<template is="dom-if" if="[[isPsstFeatureEnabled_]]">
+  <settings-toggle-button
+    class="cr-row"
+    pref="{{prefs.brave.psst.settings.enable_psst}}"
+    label="$i18n{psstSettingsToggleLabel}"
+    sub-label="$i18n{psstSettingsToggleSubLabel}"
+    learn-more-url="$i18n{psstLearnMoreURL}">
+  </settings-toggle-button>
+</template>
+<!-- </if> -->
+
+<!-- <if expr="is_win"> -->
+  <template is="dom-if" if="[[isWindowsRecallAvailable_]]">
+    <settings-toggle-button id="windowsRecallDisabled"
+        class="cr-row"
+        pref="[[windowsRecallDisabledPref_]]"
+        on-settings-boolean-control-change="windowsRecallDisabledChange_"
+        label="$i18n{windowsRecallDisabledLabel}"
+        sub-label="$i18n{windowsRecallDisabledSubLabel}">
+        <template is="dom-if"
+                  if="[[shouldShowRestartWindowsRecall_(windowsRecallDisabledPref_.value)]]">
+            <cr-button on-click="restartBrowser_" slot="more-actions">
+              $i18n{restart}
+            </cr-button>
+        </template>
+    </settings-toggle-button>
+  </template>
+<!-- </if> -->
+<settings-do-not-track-toggle id="doNotTrack" prefs="{{prefs}}">
+</settings-do-not-track-toggle>
+
+<div class="cr-row first spoofing-intro">
+  <div class="start">
+    <h2 class="spoofing-title">$i18n{spoofingSectionTitle}</h2>
+    <div class="secondary">$i18n{spoofingSectionDesc}</div>
+  </div>
+</div>
+
+<settings-toggle-button id="fakeLocationEnabled"
+    class="cr-row"
+    pref="{{prefs.brave.privacy.fake_geolocation_enabled}}"
+    label="$i18n{fakeLocationLabel}"
+    sub-label="$i18n{fakeLocationSubLabel}">
+</settings-toggle-button>
+<cr-collapse opened="[[prefs.brave.privacy.fake_geolocation_enabled.value]]">
+  <settings-toggle-button id="fakeLocationAutoIp"
+      class="cr-row continuation indented"
+      pref="{{prefs.brave.privacy.fake_geolocation_auto_ip}}"
+      label="Match my IP location"
+      sub-label="Use the location of the IP address you appear to browse from, and follow it when it changes — for example when you connect to a VPN.">
+  </settings-toggle-button>
+  <div class="cr-row continuation indented">
+    <div class="start">
+      <div class="label">$i18n{fakeLocationPlaceLabel}</div>
+    </div>
+    <select id="fakeLocationPlace" class="md-select"
+        disabled$="[[prefs.brave.privacy.fake_geolocation_auto_ip.value]]"
+        value="[[selectedPlace_]]"
+        on-change="onFakeLocationPlaceChanged_">
+      <template is="dom-repeat" items="[[fakeLocationPlaces_]]">
+        <option value="[[item.value]]">[[item.name]]</option>
+      </template>
+    </select>
+  </div>
+  <div class="cr-row continuation indented coordinate-row"
+      hidden$="[[isPresetPlace_(selectedPlace_)]]">
+    <cr-input id="fakeLatitude" class="coordinate-input" type="number"
+        step="any" min="-90" max="90"
+        label="$i18n{fakeLocationLatitude}"
+        value="[[latitudeInput_]]"
+        invalid="[[latitudeInvalid_]]"
+        error-message="$i18n{fakeLocationLatitudeError}"
+        on-change="onLatitudeChanged_">
+    </cr-input>
+    <cr-input id="fakeLongitude" class="coordinate-input" type="number"
+        step="any" min="-180" max="180"
+        label="$i18n{fakeLocationLongitude}"
+        value="[[longitudeInput_]]"
+        invalid="[[longitudeInvalid_]]"
+        error-message="$i18n{fakeLocationLongitudeError}"
+        on-change="onLongitudeChanged_">
+    </cr-input>
+  </div>
+</cr-collapse>
+
+<settings-toggle-button id="fakeTimezoneEnabled"
+    class="cr-row"
+    pref="{{prefs.brave.privacy.fake_timezone_enabled}}"
+    label="$i18n{fakeTimezoneLabel}"
+    sub-label="$i18n{fakeTimezoneSubLabel}">
+</settings-toggle-button>
+<cr-collapse opened="[[prefs.brave.privacy.fake_timezone_enabled.value]]">
+  <settings-toggle-button id="fakeTimezoneAutoIp"
+      class="cr-row continuation indented"
+      pref="{{prefs.brave.privacy.fake_timezone_auto_ip}}"
+      label="Match my IP location"
+      sub-label="Use the time zone of the IP address you appear to browse from, and follow it when it changes — for example when you connect to a VPN.">
+  </settings-toggle-button>
+  <div class="cr-row continuation indented">
+    <div class="start">
+      <div class="label">$i18n{fakeTimezoneZoneLabel}</div>
+    </div>
+    <settings-dropdown-menu id="fakeTimezone"
+        label="$i18n{fakeTimezoneZoneLabel}"
+        disabled="[[prefs.brave.privacy.fake_timezone_auto_ip.value]]"
+        pref-key="brave.privacy.fake_timezone_id"
+        menu-options="[[fakeTimezoneOptions_]]">
+    </settings-dropdown-menu>
+  </div>
+</cr-collapse>
+
+<settings-toggle-button id="fakeDeviceInfoEnabled"
+    class="cr-row"
+    pref="{{prefs.brave.privacy.fake_device_info_enabled}}"
+    label="$i18n{fakeDeviceInfoLabel}"
+    sub-label="$i18n{fakeDeviceInfoSubLabel}">
+</settings-toggle-button>
+<cr-collapse opened="[[prefs.brave.privacy.fake_device_info_enabled.value]]">
+  <div class="cr-row continuation indented">
+    <div class="start">
+      <div class="label">$i18n{fakeDeviceInfoPresetLabel}</div>
+    </div>
+    <settings-dropdown-menu id="fakeDeviceInfoPreset"
+        label="$i18n{fakeDeviceInfoPresetLabel}"
+        pref-key="brave.privacy.fake_device_info_preset"
+        menu-options="[[fakeDeviceInfoPresets_]]">
+    </settings-dropdown-menu>
+  </div>
+</cr-collapse>
+
+<div class="cr-row first spoofing-intro">
+  <div class="start">
+    <h2 class="spoofing-title">$i18n{voiceSwapSectionTitle}</h2>
+  </div>
+</div>
+<settings-toggle-button id="voiceSwapEnabled"
+    class="cr-row"
+    pref="{{prefs.brave.privacy.voice_swap_enabled}}"
+    label="$i18n{voiceSwapLabel}"
+    sub-label="$i18n{voiceSwapSubLabel}">
+</settings-toggle-button>
+<cr-collapse opened="[[prefs.brave.privacy.voice_swap_enabled.value]]">
+  <div class="cr-row continuation indented">
+    <div class="start">
+      <div class="label">$i18n{voiceSwapPersonaLabel}</div>
+    </div>
+    <settings-dropdown-menu id="voiceSwapPersona"
+        label="$i18n{voiceSwapPersonaLabel}"
+        pref-key="brave.privacy.voice_swap_persona_id"
+        menu-options="[[voiceSwapPersonaOptions_]]">
+    </settings-dropdown-menu>
+  </div>
+  <div class="cr-row continuation indented" hidden$="[[!selectedPersonaIsCustom_]]">
+    <cr-button on-click="onRemoveVoiceSwapPersona_">
+      $i18n{voiceSwapPersonaRemoveButton}
+    </cr-button>
+  </div>
+  <template is="dom-if" if="[[!showAddPersonaForm_]]">
+    <div class="cr-row continuation indented">
+      <cr-button on-click="onShowAddPersonaForm_">
+        $i18n{voiceSwapAddPersonaButton}
+      </cr-button>
+    </div>
+  </template>
+  <template is="dom-if" if="[[showAddPersonaForm_]]">
+    <div class="cr-row continuation indented add-persona-form">
+      <cr-input id="newPersonaName" label="$i18n{voiceSwapPersonaNameLabel}"
+          value="{{newPersonaName_}}">
+      </cr-input>
+      <div class="file-row">
+        <label class="label">$i18n{voiceSwapPersonaModelLabel}</label>
+        <input id="newPersonaModelFile" type="file" accept=".pth"
+            on-change="onPersonaModelFileChanged_">
+      </div>
+      <div class="file-row">
+        <label class="label">$i18n{voiceSwapPersonaIndexLabel}</label>
+        <input id="newPersonaIndexFile" type="file" accept=".index"
+            on-change="onPersonaIndexFileChanged_">
+      </div>
+      <div class="secondary" hidden$="[[!addPersonaError_]]">
+        $i18n{voiceSwapPersonaAddError}
+      </div>
+      <div class="file-row">
+        <cr-button class="action-button" disabled="[[!canSavePersona_]]"
+            on-click="onSaveVoiceSwapPersona_">
+          $i18n{voiceSwapPersonaSaveButton}
+        </cr-button>
+        <cr-button on-click="onCancelAddPersona_">
+          $i18n{voiceSwapPersonaCancelButton}
+        </cr-button>
+      </div>
+    </div>
+  </template>
+</cr-collapse>

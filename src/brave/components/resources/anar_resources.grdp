@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grit-part>
+  <!-- Mullvad's own logo, used to label the Mullvad row in the VPN picker.
+       Mullvad publishes no Chromium extension, so unlike Proton VPN there is
+       no installed extension to read an icon from. -->
+  <include name="IDR_ANAR_MULLVAD_ICON_32" file="anar/mullvad_icon.png" type="BINDATA" />
+  <include name="IDR_ANAR_NTP_LOGO_DARK_BG" file="anar/anar_logo_dark_bg.png" type="BINDATA" />
+  <include name="IDR_ANAR_ACCOUNT_HTML" file="anar/account/index.html" type="BINDATA" />
+  <include name="IDR_ANAR_ACCOUNT_JS" file="anar/account/app.js" type="BINDATA" />
+  <include name="IDR_ANAR_ACCOUNT_OPAQUE_WASM_JS" file="anar/account/opaque_wasm.js" type="BINDATA" />
+  <include name="IDR_ANAR_ACCOUNT_OPAQUE_WASM_BG" file="anar/account/opaque_wasm_bg.wasm" type="BINDATA" />
+  <include name="IDR_ANAR_ACCOUNT_ARGON2_JS" file="anar/account/argon2.umd.min.js" type="BINDATA" />
+</grit-part>
