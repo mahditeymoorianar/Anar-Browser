@@ -1,0 +1,32 @@
+diff --git a/BUILD.gn b/BUILD.gn
+index 39f578a9c8e..5f4b4f13029 100644
+--- a/BUILD.gn
++++ b/BUILD.gn
+@@ -927,6 +927,7 @@ config("internal_config_base") {
+     "$target_gen_dir",
+     "$target_gen_dir/include",
+   ]
++  _include_dirs = include_dirs include_dirs = [] include_dirs = [ "//brave/chromium_src/v8" ] + _include_dirs
+ }
+ 
+ config("internal_config") {
+@@ -3618,6 +3619,7 @@ v8_header_set("v8_headers") {
+     ":v8_tracing",
+     ":v8_version",
+   ]
++  import("//brave/v8/sources.gni") sources += brave_v8_headers_sources public_deps += brave_v8_headers_public_deps
+ }
+ 
+ if (v8_generate_external_defines_header) {
+diff --git a/src/codegen/compiler.cc b/src/codegen/compiler.cc
+index adfbf3f4a15..a0920c79482 100644
+--- a/src/codegen/compiler.cc
++++ b/src/codegen/compiler.cc
+@@ -3417,6 +3417,7 @@ MaybeDirectHandle<JSFunction> Compiler::GetFunctionFromEval(
+     }
+   }
+   CHECK(is_compiled_scope.is_compiled());
++  BRAVE_COMPILER_GET_FUNCTION_FROM_EVAL
+ 
+   return result;
+ }

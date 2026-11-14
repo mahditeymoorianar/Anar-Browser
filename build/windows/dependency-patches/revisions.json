@@ -1,0 +1,22 @@
+{
+  "src/v8": {
+    "revision": "6aacaf6256a069ee455142333b7d38cad1c8d6e0",
+    "patch": "v8.patch"
+  },
+  "src/third_party/catapult": {
+    "revision": "d810008022eeaefcbea50393ea5baa0930b27047",
+    "patch": "catapult.patch"
+  },
+  "src/third_party/devtools-frontend/src": {
+    "revision": "941348cf79c423892e1c7c219091a7103d18a68b",
+    "patch": "devtools-frontend.patch"
+  },
+  "src/third_party/search_engines_data/resources": {
+    "revision": "cf814b5cc732a437b4ee636f1c7907f8f1ced51a",
+    "patch": "search_engines_data.patch"
+  },
+  "src/third_party/ffmpeg": {
+    "revision": "2b68d2babae73714846961fb0ee47e3b3d2e39a9",
+    "patch": "ffmpeg.patch"
+  }
+}

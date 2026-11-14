@@ -1,0 +1,138 @@
+diff --git a/common/py_utils/py_utils/cloud_storage.py b/common/py_utils/py_utils/cloud_storage.py
+index ee4fdfa19..0af2c74b3 100644
+--- a/common/py_utils/py_utils/cloud_storage.py
++++ b/common/py_utils/py_utils/cloud_storage.py
+@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+ 
+ 
+ PUBLIC_BUCKET = 'chromium-telemetry'
+-PARTNER_BUCKET = 'chrome-partner-telemetry'
++PARTNER_BUCKET = 'brave-perf-data'  # is redirected to s3://brave-perf-data
+ INTERNAL_BUCKET = 'chrome-telemetry'
+ TELEMETRY_OUTPUT = 'chrome-telemetry-output'
+ 
+@@ -643,3 +643,4 @@ def CalculateHash(file_path):
+ def ReadHash(hash_path):
+   with open(hash_path, 'rb') as f:
+     return f.read(1024).rstrip().decode('utf-8')
++from brave_chromium_utils import inline_chromium_src_override; inline_chromium_src_override(globals(), locals())
+diff --git a/common/py_utils/py_utils/discover.py b/common/py_utils/py_utils/discover.py
+index d28ec132f..a6324a8ed 100644
+--- a/common/py_utils/py_utils/discover.py
++++ b/common/py_utils/py_utils/discover.py
+@@ -188,3 +188,4 @@ _COUNTER = [0]
+ def _GetUniqueModuleName():
+   _COUNTER[0] += 1
+   return "module_" + str(_COUNTER[0])
++from brave_chromium_utils import inline_chromium_src_override; inline_chromium_src_override(globals(), locals())
+diff --git a/telemetry/telemetry/internal/actions/action_runner.py b/telemetry/telemetry/internal/actions/action_runner.py
+index 7908c30af..d9ffb015c 100644
+--- a/telemetry/telemetry/internal/actions/action_runner.py
++++ b/telemetry/telemetry/internal/actions/action_runner.py
+@@ -42,7 +42,7 @@ import py_utils
+ 
+ # Time to wait in seconds before requesting a memory dump in deterministic
+ # mode, thus allowing metric values to stabilize a bit.
+-_MEMORY_DUMP_WAIT_TIME = 3
++_MEMORY_DUMP_WAIT_TIME = 10
+ 
+ # Time to wait in seconds after forcing garbage collection to allow its
+ # effects to propagate. Experimentally determined on an Android One device
+diff --git a/telemetry/telemetry/internal/backends/android_browser_backend_settings.py b/telemetry/telemetry/internal/backends/android_browser_backend_settings.py
+index ad4d42576..ac7d83075 100644
+--- a/telemetry/telemetry/internal/backends/android_browser_backend_settings.py
++++ b/telemetry/telemetry/internal/backends/android_browser_backend_settings.py
+@@ -548,3 +548,4 @@ ANDROID_BACKEND_SETTINGS = (
+     ANDROID_CHROME_CANARY,
+     ANDROID_SYSTEM_CHROME,
+ )
++from brave_chromium_utils import inline_chromium_src_override; inline_chromium_src_override(globals(), locals())
+diff --git a/telemetry/telemetry/internal/backends/browser_backend.py b/telemetry/telemetry/internal/backends/browser_backend.py
+index 58617505d..82d813e09 100644
+--- a/telemetry/telemetry/internal/backends/browser_backend.py
++++ b/telemetry/telemetry/internal/backends/browser_backend.py
+@@ -629,3 +629,4 @@ def _GetWindowsStackSummary(symbolized_minidump):
+     logging.info('Unable to parse any call sites')
+     return None
+   return call_sites
++from brave_chromium_utils import inline_chromium_src_override; inline_chromium_src_override(globals(), locals())
+diff --git a/telemetry/telemetry/internal/backends/chrome/desktop_browser_finder.py b/telemetry/telemetry/internal/backends/chrome/desktop_browser_finder.py
+index 629ff0ff7..fcafeecb5 100644
+--- a/telemetry/telemetry/internal/backends/chrome/desktop_browser_finder.py
++++ b/telemetry/telemetry/internal/backends/chrome/desktop_browser_finder.py
+@@ -506,3 +506,4 @@ def FindAllAvailableBrowsers(finder_options, device):
+     return []
+ 
+   return browsers
++from brave_chromium_utils import inline_chromium_src_override; inline_chromium_src_override(globals(), locals())
+diff --git a/telemetry/telemetry/page/shared_page_state.py b/telemetry/telemetry/page/shared_page_state.py
+index 413881bd9..b0377c038 100644
+--- a/telemetry/telemetry/page/shared_page_state.py
++++ b/telemetry/telemetry/page/shared_page_state.py
+@@ -216,6 +216,7 @@ class SharedPageState(story_module.SharedState):
+     if archive_path is not None and not os.path.isfile(archive_path):
+       logging.warning('WPR archive missing: %s', archive_path)
+       archive_path = None
++      assert self._finder_options.use_live_sites # Brave: assert if no WPR
+     self.platform.network_controller.StartReplay(
+         archive_path, page.make_javascript_deterministic, self._extra_wpr_args)
+ 
+diff --git a/telemetry/telemetry/story/story_set.py b/telemetry/telemetry/story/story_set.py
+index 5ac91f7a4..9259f342c 100644
+--- a/telemetry/telemetry/story/story_set.py
++++ b/telemetry/telemetry/story/story_set.py
+@@ -195,3 +195,4 @@ class StorySet():
+ 
+   def __setitem__(self, key, value):
+     self._stories[key] = value
++from brave_chromium_utils import inline_chromium_src_override; inline_chromium_src_override(globals(), locals())
+diff --git a/tracing/tracing/metrics/all_metrics.html b/tracing/tracing/metrics/all_metrics.html
+index c41795e13..c85299d7a 100644
+--- a/tracing/tracing/metrics/all_metrics.html
++++ b/tracing/tracing/metrics/all_metrics.html
+@@ -47,3 +47,4 @@ found in the LICENSE file.
+ <link rel="import" href="/tracing/metrics/vr/webvr_metric.html">
+ <link rel="import" href="/tracing/metrics/vr/webxr_metric.html">
+ <link rel="import" href="/tracing/metrics/webrtc/webrtc_rendering_metric.html">
++<link rel="import" href="/brave/tools/perf/metrics/brave_all_metrics.html">
+diff --git a/tracing/tracing/metrics/system_health/loading_metric.html b/tracing/tracing/metrics/system_health/loading_metric.html
+index f20338b5b..01a805fb0 100644
+--- a/tracing/tracing/metrics/system_health/loading_metric.html
++++ b/tracing/tracing/metrics/system_health/loading_metric.html
+@@ -203,6 +203,7 @@ tr.exportTo('tr.metrics.sh', function() {
+               snapshot.args.isLoadingMainFrame;
+       if (!isOutermostMainFrame) continue;
+       const url = snapshot.args.documentLoaderURL;
++      if (url.startsWith('chrome-extension://')) continue;  // Ignore extension background pages
+       if (tr.e.chrome.CHROME_INTERNAL_URLS.includes(url)) continue;
+       let navigationStartEvent;
+       if (targetEvent.args.data === undefined ||
+@@ -253,6 +254,7 @@ tr.exportTo('tr.metrics.sh', function() {
+   function collectTimeToEventInCpuTime(rendererHelper, timeToXEntries) {
+     const samples = [];
+     for (const { targetEvent, navigationStartEvent, url } of timeToXEntries) {
++      if (url.startsWith('chrome-extension://')) continue;  // Ignore extension background pages
+       const navStartToEventRange = tr.b.math.Range.fromExplicitRange(
+           navigationStartEvent.start, targetEvent.start);
+ 
+diff --git a/tracing/tracing/value/diagnostics/reserved_infos.py b/tracing/tracing/value/diagnostics/reserved_infos.py
+index 50e3f0aa9..b3d0588d5 100644
+--- a/tracing/tracing/value/diagnostics/reserved_infos.py
++++ b/tracing/tracing/value/diagnostics/reserved_infos.py
+@@ -116,3 +116,4 @@ def AllInfos():
+ def AllNames():
+   for info in AllInfos():
+     yield info.name
++from brave_chromium_utils import inline_chromium_src_override; inline_chromium_src_override(globals(), locals())
+diff --git a/tracing/tracing_project.py b/tracing/tracing_project.py
+index 6d2d7327d..b079c9ecf 100644
+--- a/tracing/tracing_project.py
++++ b/tracing/tracing_project.py
+@@ -126,6 +126,7 @@ class TracingProject(object):
+     self.source_paths.append(self.chai_path)
+     self.source_paths.append(self.mocha_path)
+     self.source_paths.append(self.oboe_path)
++    self.source_paths.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir,  os.path.pardir))) # Add /src
+ 
+   def CreateVulcanizer(self):
+     from py_vulcanize import project as project_module # pylint: disable=import-outside-toplevel

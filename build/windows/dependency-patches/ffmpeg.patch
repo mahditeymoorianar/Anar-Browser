@@ -1,0 +1,144 @@
+diff --git a/BUILD.gn b/BUILD.gn
+index 19fa87fa99..fb3f8feb1c 100644
+--- a/BUILD.gn
++++ b/BUILD.gn
+@@ -241,6 +241,7 @@ target(link_target_type, "ffmpeg_internal") {
+   include_dirs = [
+     platform_config_root,
+     ".",
++    "libavcodec",
+   ]
+   defines = [
+     "HAVE_AV_CONFIG_H",
+diff --git a/chromium/config/Chrome/linux/arm64/config.h b/chromium/config/Chrome/linux/arm64/config.h
+index e3252cb887..ae35c7f3e4 100644
+--- a/chromium/config/Chrome/linux/arm64/config.h
++++ b/chromium/config/Chrome/linux/arm64/config.h
+@@ -735,7 +735,7 @@
+ #define CONFIG_AUDIO_FRAME_QUEUE 0
+ #define CONFIG_AUDIODSP 0
+ #define CONFIG_BLOCKDSP 0
+-#define CONFIG_BSWAPDSP 0
++#define CONFIG_BSWAPDSP 1
+ #define CONFIG_CABAC 1
+ #define CONFIG_CBS 0
+ #define CONFIG_CBS_APV 0
+diff --git a/chromium/config/Chrome/linux/arm64/config_components.h b/chromium/config/Chrome/linux/arm64/config_components.h
+index 5737f74785..549cdbcc18 100644
+--- a/chromium/config/Chrome/linux/arm64/config_components.h
++++ b/chromium/config/Chrome/linux/arm64/config_components.h
+@@ -144,7 +144,7 @@
+ #define CONFIG_H264_QSV_DECODER 0
+ #define CONFIG_H264_RKMPP_DECODER 0
+ #define CONFIG_HAP_DECODER 0
+-#define CONFIG_HEVC_DECODER 0
++#define CONFIG_HEVC_DECODER 1
+ #define CONFIG_HEVC_QSV_DECODER 0
+ #define CONFIG_HEVC_RKMPP_DECODER 0
+ #define CONFIG_HEVC_V4L2M2M_DECODER 0
+@@ -1050,7 +1050,7 @@
+ #define CONFIG_H261_PARSER 0
+ #define CONFIG_H263_PARSER 0
+ #define CONFIG_H264_PARSER 1
+-#define CONFIG_HEVC_PARSER 0
++#define CONFIG_HEVC_PARSER 1
+ #define CONFIG_HDR_PARSER 0
+ #define CONFIG_IPU_PARSER 0
+ #define CONFIG_JPEG2000_PARSER 0
+diff --git a/chromium/config/Chrome/linux/arm64/libavcodec/codec_list.c b/chromium/config/Chrome/linux/arm64/libavcodec/codec_list.c
+index fe5adb0d92..8e616c63ca 100644
+--- a/chromium/config/Chrome/linux/arm64/libavcodec/codec_list.c
++++ b/chromium/config/Chrome/linux/arm64/libavcodec/codec_list.c
+@@ -1,5 +1,6 @@
+ static const FFCodec * const codec_list[] = {
+     &ff_h264_decoder,
++    &ff_hevc_decoder,
+     &ff_aac_decoder,
+     &ff_flac_decoder,
+     &ff_mp3_decoder,
+diff --git a/chromium/config/Chrome/linux/arm64/libavcodec/parser_list.c b/chromium/config/Chrome/linux/arm64/libavcodec/parser_list.c
+index e3684b3b3d..93c86eafcf 100644
+--- a/chromium/config/Chrome/linux/arm64/libavcodec/parser_list.c
++++ b/chromium/config/Chrome/linux/arm64/libavcodec/parser_list.c
+@@ -2,6 +2,7 @@ static const FFCodecParser * const parser_list[] = {
+     &ff_aac_parser,
+     &ff_flac_parser,
+     &ff_h264_parser,
++    &ff_hevc_parser,
+     &ff_mpegaudio_parser,
+     &ff_opus_parser,
+     &ff_vorbis_parser,
+diff --git a/chromium/config/Chrome/linux/x64/config.h b/chromium/config/Chrome/linux/x64/config.h
+index 02f902422a..441326a3f6 100644
+--- a/chromium/config/Chrome/linux/x64/config.h
++++ b/chromium/config/Chrome/linux/x64/config.h
+@@ -734,7 +734,7 @@
+ #define CONFIG_AUDIO_FRAME_QUEUE 0
+ #define CONFIG_AUDIODSP 0
+ #define CONFIG_BLOCKDSP 0
+-#define CONFIG_BSWAPDSP 0
++#define CONFIG_BSWAPDSP 1
+ #define CONFIG_CABAC 1
+ #define CONFIG_CBS 0
+ #define CONFIG_CBS_APV 0
+diff --git a/chromium/config/Chrome/linux/x64/config_components.h b/chromium/config/Chrome/linux/x64/config_components.h
+index 5737f74785..549cdbcc18 100644
+--- a/chromium/config/Chrome/linux/x64/config_components.h
++++ b/chromium/config/Chrome/linux/x64/config_components.h
+@@ -144,7 +144,7 @@
+ #define CONFIG_H264_QSV_DECODER 0
+ #define CONFIG_H264_RKMPP_DECODER 0
+ #define CONFIG_HAP_DECODER 0
+-#define CONFIG_HEVC_DECODER 0
++#define CONFIG_HEVC_DECODER 1
+ #define CONFIG_HEVC_QSV_DECODER 0
+ #define CONFIG_HEVC_RKMPP_DECODER 0
+ #define CONFIG_HEVC_V4L2M2M_DECODER 0
+@@ -1050,7 +1050,7 @@
+ #define CONFIG_H261_PARSER 0
+ #define CONFIG_H263_PARSER 0
+ #define CONFIG_H264_PARSER 1
+-#define CONFIG_HEVC_PARSER 0
++#define CONFIG_HEVC_PARSER 1
+ #define CONFIG_HDR_PARSER 0
+ #define CONFIG_IPU_PARSER 0
+ #define CONFIG_JPEG2000_PARSER 0
+diff --git a/chromium/config/Chrome/linux/x64/libavcodec/codec_list.c b/chromium/config/Chrome/linux/x64/libavcodec/codec_list.c
+index fe5adb0d92..8e616c63ca 100644
+--- a/chromium/config/Chrome/linux/x64/libavcodec/codec_list.c
++++ b/chromium/config/Chrome/linux/x64/libavcodec/codec_list.c
+@@ -1,5 +1,6 @@
+ static const FFCodec * const codec_list[] = {
+     &ff_h264_decoder,
++    &ff_hevc_decoder,
+     &ff_aac_decoder,
+     &ff_flac_decoder,
+     &ff_mp3_decoder,
+diff --git a/chromium/config/Chrome/linux/x64/libavcodec/parser_list.c b/chromium/config/Chrome/linux/x64/libavcodec/parser_list.c
+index e3684b3b3d..93c86eafcf 100644
+--- a/chromium/config/Chrome/linux/x64/libavcodec/parser_list.c
++++ b/chromium/config/Chrome/linux/x64/libavcodec/parser_list.c
+@@ -2,6 +2,7 @@ static const FFCodecParser * const parser_list[] = {
+     &ff_aac_parser,
+     &ff_flac_parser,
+     &ff_h264_parser,
++    &ff_hevc_parser,
+     &ff_mpegaudio_parser,
+     &ff_opus_parser,
+     &ff_vorbis_parser,
+diff --git a/ffmpeg_generated.gni b/ffmpeg_generated.gni
+index 6075e647ae..ae8c07b267 100644
+--- a/ffmpeg_generated.gni
++++ b/ffmpeg_generated.gni
+@@ -15,6 +15,11 @@ ffmpeg_asm_include_dirs = []
+ ffmpeg_nasm_include_dirs = []
+ ffmpeg_c_deps = []
+ ffmpeg_asm_deps = []
++import("//brave/third_party/ffmpeg/sources.gni")
++ffmpeg_c_sources += brave_third_party_ffmpeg_c_sources
++ffmpeg_asm_sources += brave_third_party_ffmpeg_asm_sources
++ffmpeg_asm_deps += brave_third_party_ffmpeg_asm_deps
++ffmpeg_gas_sources += brave_third_party_ffmpeg_gas_sources
+ 
+ use_linux_config = is_linux || is_chromeos || is_fuchsia
+ 
